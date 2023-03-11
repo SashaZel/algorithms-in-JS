@@ -1,15 +1,19 @@
 export class Node {
-  constructor(value) {
+  value: string;
+  next: Node | null;
+  constructor(value: string) {
     this.value = value;
     this.next = null;
   }
 
-  setNext(next) {
+  setNext(next: Node) {
     this.next = next;
   }
 }
 
 export class LinkedList {
+  length: number;
+  start: Node | null;
 
   constructor() {
     this.length = 0;
@@ -25,6 +29,7 @@ export class LinkedList {
         currentElement = this.start;
       } else {
         result += currentElement.value + " ->> ";
+        
         nextElement = currentElement.next;
         currentElement = nextElement;
       }
@@ -32,15 +37,24 @@ export class LinkedList {
     return result;
   }
 
-  setListElement(newElement) {
+  // TODO: add types
+
+  setListElement(newElement: Node) {
     if (this.length === 0) {
       this.start = newElement;
     } else {
       let currentElement = this.start;
+
       let nextElement;
       for (let i = 1; i < this.length; i++) {
+        if (currentElement === null) {
+          throw new Error("no current element in setListElement");
+        }
         nextElement = currentElement.next;
         currentElement = nextElement;
+      }
+      if (currentElement === null) {
+        throw new Error("no current element in setListElement");
       }
       currentElement.setNext(newElement);
     }
@@ -48,30 +62,43 @@ export class LinkedList {
     return this.length;
   }
 
-  getElement(index) {
+  getElement(index: number) {
     if (typeof index !== "number" || index >= this.length) {
       return undefined;
     }
     let currentElement = this.start;
     for (let i = 0; i < index; i++) {
+      if (currentElement === null) {
+        throw new Error("no current element in getElement");
+      }
       currentElement = currentElement.next;
+    }
+    if (currentElement === null) {
+      throw new Error("no current element in getElement");
     }
     return currentElement.value;
   }
 
-  removeElement(index) {
+  removeElement(index: number) {
     if (typeof index !== "number" || index >= this.length) {
       return undefined;
     }
     let currentElement = this.start;
+    if (currentElement === null) {
+      throw new Error("no current element in removeElement");
+    }
     if (index === 0) {
       this.start = currentElement.next;
       this.length -= 1;
       return 1;
     }
     for (let i = 0; i <= index; i++) {
-      let delElement = currentElement.next;
-      if (i === index-1) {
+      
+    if (currentElement === null || !currentElement?.next) {
+      throw new Error("no currentElement.next in removeElement");
+    }
+      let delElement: Node = currentElement.next;
+      if (i === index - 1) {
         this.length -= 1;
         currentElement.next = delElement.next;
         return 1;
@@ -82,17 +109,17 @@ export class LinkedList {
 
   findElement(valueForSearch) {
     let currentElement = this.start;
-    for (let i=0; i < this.length; i++) {
+    for (let i = 0; i < this.length; i++) {
       if (currentElement.value === valueForSearch) {
         return i;
       }
       currentElement = currentElement.next;
     }
     return -1;
-  } 
+  }
 
   insertElement(newValue, index) {
-    if (typeof index !== 'number' || index > this.length || index < 0) {
+    if (typeof index !== "number" || index > this.length || index < 0) {
       return -1;
     }
     let currentElement = this.start;
@@ -104,9 +131,9 @@ export class LinkedList {
       return this.length;
     }
 
-    for (let i=0; i<this.length; i++) {
+    for (let i = 0; i < this.length; i++) {
       let nextElement = currentElement.next;
-      if (i === index-1) {
+      if (i === index - 1) {
         currentElement.next = insertElement;
         insertElement.next = nextElement;
         this.length += 1;
@@ -115,26 +142,4 @@ export class LinkedList {
       currentElement = currentElement.next;
     }
   }
-
 }
-
-const node1 = new Node(5);
-const node2 = new Node(6);
-const node3 = new Node(7);
-const node4 = new Node(8);
-
-const myLinkedList = new LinkedList();
-
-myLinkedList.setListElement(node1);
-myLinkedList.setListElement(node2);
-myLinkedList.setListElement(node3);
-myLinkedList.setListElement(node4);
-
-//console.log(myLinkedList);
-console.log(myLinkedList.toString());
-//console.log(myLinkedList.length);
-//console.log(myLinkedList.getElement(0));
-//console.log(myLinkedList.removeElement(1));
-//console.log(myLinkedList.findElement(6));
-console.log(myLinkedList.insertElement(10, 2))
-console.log(myLinkedList.toString());
